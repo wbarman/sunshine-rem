@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,49 +9,9 @@
     tools:context="com.homegadgetry.sunshine.app.MainActivityFragment"
     tools:showIn="@layout/activity_main">
 
+    <ListView
+        android:id="@+id/listview_forecast"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Today, June 24"
-        android:id="@+id/textViewDate"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="21°"
-        android:id="@+id/textViewDayTemperature"
-        android:layout_below="@+id/textViewDate"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="10°"
-        android:id="@+id/textViewNightTemperature"
-        android:layout_below="@+id/textViewDayTemperature"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageViewWeatherIcon"
-        android:layout_alignTop="@+id/textViewDate"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:src="@android:drawable/sym_def_app_icon" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cloudy"
-        android:id="@+id/textView"
-        android:layout_below="@+id/imageViewWeatherIcon"
-        android:layout_alignLeft="@+id/imageViewWeatherIcon"
-        android:layout_alignStart="@+id/imageViewWeatherIcon" />
-</RelativeLayout>
+</FrameLayout>
