@@ -1,5 +1,6 @@
 package com.homegadgetry.sunshine.app;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -85,6 +86,10 @@ public class ForecastFragment extends Fragment {
 
         @Override
         protected Void doInBackground(String... params) {
+            String format = "json";
+            String units = "metric";
+            int numDays = 7;
+
             if (params.length == 0)
                 return null;
 
@@ -97,10 +102,30 @@ public class ForecastFragment extends Fragment {
             String forecastJsonStr = null;
 
             try {
+                final String QUERY_PARAM = "q";
+                final String FORMAT_PARAM = "mode";
+                final String UNITS_PARAM = "units";
+                final String DAYS_PARAM = "cnt";
+                final String APPID_PARAM = "APPID";
+
+                Uri.Builder uriBuilder = new Uri.Builder();
+                uriBuilder.scheme("http")
+                        .authority("api.openweathermap.org")
+                        .appendPath("data")
+                        .appendPath("2.5")
+                        .appendPath("forecast")
+                        .appendPath("daily")
+                        .appendQueryParameter(QUERY_PARAM, params[0])
+                        .appendQueryParameter(FORMAT_PARAM, format)
+                        .appendQueryParameter(UNITS_PARAM, units)
+                        .appendQueryParameter("cnt", Integer.toString(numDays))
+                        .appendQueryParameter(APPID_PARAM, "6a1780783450c0872092701604ab38af")
+                        .build();
+
                 // Construct the URL for the OpenWeatherMap query
                 // Possible parameters are avaiable at OWM's forecast API page, at
                 // http://openweathermap.org/API#forecast
-                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043,us&mode=json&units=metric&cnt=7&APPID=6a1780783450c0872092701604ab38af");
+                URL url = new URL(uriBuilder.toString());
 
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
