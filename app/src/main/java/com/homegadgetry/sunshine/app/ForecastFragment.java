@@ -27,14 +27,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class ForecastFragment extends Fragment {
     private final String LOG_TAG = ForecastFragment.class.getSimpleName();
+    private ArrayAdapter<String> mForecastAdapter;
 
     public ForecastFragment() {
     }
@@ -65,25 +64,14 @@ public class ForecastFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_forecast, container, false);
-
-        String[] data = {
-                "Mon 6/23 - Sunny - 31/17",
-                "Tue 6/24 - Foggy - 21/8",
-                "Wed 6/25 - Cloudy - 22/17",
-                "Thurs 6/26 - Rainy - 18/11",
-                "Fri 6/27 - Foggy - 21/10",
-                "Sat 6/28 - TRAPPED IN WEATHERSTATION - 23/18",
-                "Sun 6/29 - Sunny - 20/7"
-        };
-
-//        List<String> list = ArrayList<String>(da)
-        List<String> weekForecast = Arrays.asList(data);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-                                                                R.layout.list_item_forecast,
-                                                                R.id.list_item_forecast_textview,
-                                                                weekForecast);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
-        listView.setAdapter(adapter);
+
+        mForecastAdapter = new ArrayAdapter<String>(getActivity(),
+                R.layout.list_item_forecast,
+                R.id.list_item_forecast_textview);
+
+        listView.setAdapter(mForecastAdapter);
+
         return rootView;
     }
 
@@ -177,10 +165,6 @@ public class ForecastFragment extends Fragment {
 
             highAndLow = formatHighLows(high, low);
             resultStrs[i] = day + " - " + description + " - " + highAndLow;
-        }
-
-        for (String s : resultStrs) {
-            Log.v(LOG_TAG, "Forecast entry: " + s);
         }
         return resultStrs;
     }
@@ -284,6 +268,17 @@ public class ForecastFragment extends Fragment {
                 }
             }
             return forecastList;
+        }
+
+        @Override
+        protected void onPostExecute(String[] result) {
+            if (result != null) {
+                mForecastAdapter.clear();
+                for (String dayForecastStr : result) {
+                    mForecastAdapter.add(dayForecastStr);
+                }
+            }
+            super.onPostExecute(result);
         }
     }
 }
