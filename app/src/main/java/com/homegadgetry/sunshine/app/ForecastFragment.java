@@ -72,8 +72,11 @@ public class ForecastFragment extends Fragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String location = prefs.getString(getString(R.string.pref_location_key),
                 getString(R.string.pref_location_default));
+        String temperatureUnits = prefs.getString(getString(R.string.pref_temperature_units_key),
+                getString(R.string.unit_metric));
+
         FetchWeatherTask weatherTask = new FetchWeatherTask();
-        weatherTask.execute(location);
+        weatherTask.execute(location, temperatureUnits);
     }
 
     @Override
@@ -121,6 +124,10 @@ public class ForecastFragment extends Fragment {
         return highLowStr;
     }
 
+    private double convertCelsiusToFahrenheit(double temperatureInCelsius) {
+        return ((temperatureInCelsius * 9) / 5) + 32;
+    }
+
     /**
      * Take the String representing the complete forecast in JSON Format and
      * pull out the data we need to construct the Strings needed for the wireframes.
@@ -128,7 +135,7 @@ public class ForecastFragment extends Fragment {
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
      */
-    private String[] getWeatherDataFromJson(String forecastJsonStr, int numDays)
+    private String[] getWeatherDataFromJson(String forecastJsonStr, int numDays, String units)
             throws JSONException {
 
         // These are the names of the JSON objects that need to be extracted.
@@ -187,6 +194,12 @@ public class ForecastFragment extends Fragment {
             double high = temperatureObject.getDouble(OWM_MAX);
             double low = temperatureObject.getDouble(OWM_MIN);
 
+            // convert celsius to fahrenheit if it's necessary
+            if (units.equals(getString(R.string.unit_imperial))) {
+                high = convertCelsiusToFahrenheit(high);
+                low = convertCelsiusToFahrenheit(low);
+            }
+
             highAndLow = formatHighLows(high, low);
             resultStrs[i] = day + " - " + description + " - " + highAndLow;
         }
@@ -199,7 +212,7 @@ public class ForecastFragment extends Fragment {
         @Override
         protected String[] doInBackground(String... params) {
             String format = "json";
-            String units = "metric";
+            final String units = "metric";
             int numDays = 7;
 
             if (params.length == 0)
@@ -268,7 +281,7 @@ public class ForecastFragment extends Fragment {
                 }
                 forecastJsonStr = buffer.toString();
                 try {
-                    forecastList = getWeatherDataFromJson(forecastJsonStr, numDays);
+                    forecastList = getWeatherDataFromJson(forecastJsonStr, numDays, params[1]);
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, e.getMessage(), e);
                     e.printStackTrace();
